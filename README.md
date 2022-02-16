@@ -7,6 +7,9 @@
     <strong>trilha</strong>
     <img src="https://i.imgur.com/zUC0bts.png" title="source: imgur.com" />
 </div>
+
+<br /><br />
+
 # Referências sobre Spring
 
 <br />
