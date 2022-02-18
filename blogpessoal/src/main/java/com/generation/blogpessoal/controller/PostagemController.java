@@ -212,7 +212,7 @@ public class PostagemController {
 	 * método save(postagem) e retorna o status CREATED = 201 se o objeto Postagem foi inserido na tabela 
 	 * postagens no Banco de dados.
 	 * 
-	 * Ao fazer o envio dos dados via Postman ou front-end, não é necessário passar o Id e a Data
+	 * Ao fazer o envio dos dados via Insomnia ou front-end, não é necessário passar o Id e a Data
 	 * 
 	 */
 	
@@ -224,7 +224,7 @@ public class PostagemController {
 	/*
 	 * Editar uma postagem 
 	 * 
-	 * @PutMapping: Annotation (Anotação), que indica que o método abaixo responderá todas
+	 * @PutMapping: Anotação que indica que o método abaixo responderá todas
 	 * as requisições do tipo PUT que forem enviadas no endpoint /postagens
 	 * 
 	 * O Método ResponseEntity<Postagem> putPostagem (@RequestBody Postagem postagem) será do tipo 
@@ -232,41 +232,23 @@ public class PostagemController {
 	 * neste caso Response Status 200 => OK, caso a Postagem seja atualizada na tabela. Caso não seja 
 	 * atualizada na tabela, a resposta será Internal Server Error => 500
 	 * 
-	 * @Valid: Valida o Objeto Postagem enviado no corpo da requisição (Request Body), conforme as regras
-	 * definidas na Model Postagem. Caso algum atributo não seja validado, o método retornará um status
-	 * 400 => Bad Request.
-	 * 
 	 * @RequestBody Postagem postagem: Anntotation (anotação) que insere o objeto do tipo Postagem enviado
 	 * no corpo da requisição (Request Body) e insere no parâmetro postagem do método postPostagem
 	 * 
 	 * <Postagem>: O Método retornará dentro da resposta um objeto do tipo Postagem, que são os dados da tabela.
 	 *  
-	 * return postagemRepository.findById(postagem.getId()): Retorna a execução do método findById(postagem.getId()).
-	 * Observe que o Id da postagem é obtido através do método getId() que retorna o Id da Postagem enviada no Corpo
-	 * da requisição (Request Body)
+	 * return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));: Executa o 
+	 * método save(postagem) e retorna o status OK = 200 se o objeto Postagem foi atualizado na tabela 
+	 * postagens no Banco de dados.
 	 * 
-	 * .map(resposta -> ResponseEntity.ok().body(postagemRepository.save(postagem))): Se a postagem existir, a função 
-	 *  map (tipo Optional), executa o método save(postagem) e retorna o status OK = 200 se o objeto Postagem foi 
-	 *  atualizado na tabela postagens no Banco de dados.
-	 * 
-	 * .orElse(ResponseEntity.notFound().build());: Se a postagem não for encontrada pelo método findById(postagem.getId()), 
-	 * retorna o status Not Found = 404
-	 *
-	 * Optional (map): É um contêiner para um valor que pode estar ausente. Em nosso contexto, tem como 
-	 * principal função evitar o erro do tipo NullPointerException (Objeto nulo), caso a Postagem procurada 
-	 * pelo método findById(id)não seja encontrada na Model Postagens.
-	 * 
-	 * Ao fazer o envio dos dados via Postman ou front-end é necessário passar o Id para identificar qual a 
-	 * Postagem será atualizada.
+	 * Ao fazer o envio dos dados via Insomnia ou front-end é necessário passar o Id para identificar qual
+	 * Postagem será atualizada. Caso o Id não seja passado, o Spring criará um novo registro na tabela.
 	 *  
 	 */
 	
 	@PutMapping
-	public ResponseEntity<Postagem> putPostagem (@Valid @RequestBody Postagem postagem){
-		
-		return postagemRepository.findById(postagem.getId())
-			.map(resposta -> ResponseEntity.ok().body(postagemRepository.save(postagem)))
-			.orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<Postagem> putPostagem (@RequestBody Postagem postagem){
+		return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
 	}
 			
 	/*
@@ -275,50 +257,32 @@ public class PostagemController {
 	 * @DeleteMapping("/{id}"): Annotation (Anotação), que indica que o método abaixo responderá todas
 	 * as requisições do tipo DELETE que forem enviadas no endpoint /postagens/id
 	 * 
-	 * O Método deletePostagem(@PathVariable Long id)  será do tipo ResponseEntity porque ele responderá a 
-	 * requisição (Request), com uma HTTP Response (Resposta http), neste caso Response Status 204 => NO_CONTENT 
+	 * O Método deletePostagem(@PathVariable long id)  será do tipo ResponseEntity porque ele responderá a 
+	 * requisição (Request), com uma HTTP Response (Resposta http), neste caso Response Status 200 => OK, 
 	 * caso a Postagem seja encontrada e excluída da tabela. Caso não seja encontrada, a resposta será 
-	 * Not Found => 404
+	 * Internal Server Error => 500
 	 * 
-	 * A Annotation @PathVariable Long id: insere a variável de path (caminho ou url do endpoint), 
+	 * A Annotation @PathVariable long id: insere a variável de path (caminho ou url do endpoint), 
 	 * passada no endereço da requisição, e insere no parâmetro id do método deletePostagem
 	 * 
 	 * Exemplo:
 	 * 
 	 * http://localhost:8080/postagens/1
 	 * 
-	 * o parâmetro id do método receberá o valor 1 (Id que será procurado na tabela postagens e deletado via deleteById())
+	 * o parâmetro id do método receberá 1 (Id que será procurado na tabela postagens e deletado via deleteById())
 	 * 
-	 * <?>: O ?, no contexto de genéricos, basicamente serve como um coringa, ou seja, ele representa "qualquer tipo". 
-	 * Sua função é permitir o uso do polimorfismo junto com genéricos, logo você não está definindo um tipo específico 
-	 * para retorno. Como Delete não retorna nada, o tipo ResponseEntity<Void> é o tipo genérico que será retornado.
+	 * void: Como o Método não retornará nehum valor, ele foi definido como void.
 	 * 
-	 * return postagemRepository.findById(id): Retorna a execução do método findById(id). Observe que o Id da postagem
-	 * foi passado via path (caminho ou url do endpoint)
-	 * 
-	 * .map(resposta -> {
-	 *				postagemRepository.deleteById(id);
-	 *				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-	 *			})
-	 *
-	 * O Trecho de código acima será executado se a postagem for encontrada pelo método findById. Primeiro, o método 
-	 * deleteById(id) irá excluir a postagem da tabela postagens. Na sequência, será retornado o status NO_CONTENT = 204 
-	 * indicando que a postagem foi excluída e não existe mais.
-	 * 
-	 * .orElse(ResponseEntity.notFound().build()): Caso a Postagem não seja encontrada pelo método findById, a resposta 
-	 * será Not Found => 404
+	 * postagemRepository.deleteById(id);: Apaga o registro da tabela postagens através do método deleteById(id), 
+	 * que é um método padrão da interface JpaRepository o status OK = 200 se o objeto Postagem foi apagado na 
+	 * tabela postagens no Banco de dados. Caso a Postagem não seja encontrada, a resposta será Internal Server 
+	 * Error => 500
 	 * 
 	 */
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletePostagem(@PathVariable Long id) {
-		
-		return postagemRepository.findById(id)
-				.map(resposta -> {
-					postagemRepository.deleteById(id);
-					return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-				})
-				.orElse(ResponseEntity.notFound().build());
-	}
+	public void deletePostagem(@PathVariable long id) {
+		postagemRepository.deleteById(id);
+	}	
 	
 }
