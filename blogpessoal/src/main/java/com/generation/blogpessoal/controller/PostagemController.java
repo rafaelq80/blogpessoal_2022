@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,6 +68,15 @@ public class PostagemController {
 	
 	@Autowired 
 	private PostagemRepository postagemRepository;
+	
+	/**
+	 * ATUALIZAÇÃO - POSTAGEM CONTROLLER
+	 * 
+	 * Inserir a injeção de Dependência para a Interface TemaRespository
+	 */
+
+	@Autowired
+	private TemaRepository temaRepository;
 	
 	/**
 	 * Listar todas as Postagens
@@ -218,7 +228,16 @@ public class PostagemController {
 	
 	@PostMapping
 	public ResponseEntity<Postagem> postPostagem (@Valid @RequestBody Postagem postagem){
-		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+		
+		/** Checa antes de Persistir o Objeto Postagem se o Tema existe 
+		 *  Se o Objeto Tema não existir, o status devolvido será Bad Request (400).
+		*/
+
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	
 	}
 	
 	/*
@@ -264,9 +283,27 @@ public class PostagemController {
 	@PutMapping
 	public ResponseEntity<Postagem> putPostagem (@Valid @RequestBody Postagem postagem){
 		
-		return postagemRepository.findById(postagem.getId())
-			.map(resposta -> ResponseEntity.ok().body(postagemRepository.save(postagem)))
-			.orElse(ResponseEntity.notFound().build());
+		/** Substituimos o Lambda por 2 Condicionais, que testam respectivamente se o
+		 *  Objeto Postagem existe e se o Objeto Tema existe antes de atualizar o Objeto
+		 *  Postagem.
+		 * 
+		 *  Se o Objeto Postagem não existir, o Objeto Tema não será verificado e o 
+		 *  status devolvido será Not Found (404).
+		 * 
+		 *  Se o Objeto Tema não existir, o status devolvido será Bad Request (400).
+		*/
+
+		if (postagemRepository.existsById(postagem.getId())){
+			
+			if (temaRepository.existsById(postagem.getTema().getId()))
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(postagemRepository.save(postagem));
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			
+		}			
+			
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 			
 	/*
