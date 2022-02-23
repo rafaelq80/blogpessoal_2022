@@ -34,9 +34,9 @@ class Postagem {
   - usuario : Usuario
   + getAll()
   + getById(Long id)
-  + getByDescricao(String descricao)
-  + postTema(Tema tema)
-  + putTema(Tema tema)
+  + getByTitulo(String titulo)
+  + postPostagem(Postagem postagem)
+  + putPostagem(Postagem postagem)
   + deleteTema(Long id)
 }
 class Usuario {
