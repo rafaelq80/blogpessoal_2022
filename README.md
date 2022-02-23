@@ -52,6 +52,14 @@ class Usuario {
   + cadastrarUsuario(Usuario usuario)
   + atualizarUsuario(Usuario usuario)
 }
+class UsuarioLogin{
+  - id : Long
+  - nome : String
+  - usuario : String
+  - senha : String
+  - foto : String
+  - token : String
+}
 Tema --> Postagem
 Usuario --> Postagem
 ```
