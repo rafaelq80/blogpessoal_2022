@@ -153,6 +153,7 @@ public class UsuarioService {
 				 * Se as senhas forem iguais, atualiza o objeto usuarioLogin com os dados 
 				 * recuperados do Banco de Dados e insere o Token Gerado através do Método
 				 * gerarBasicToken.
+				 * Desta forma, será possível exibir o nome e a foto do usuário no Frontend.
 				 */
 				usuarioLogin.get().setId(usuario.get().getId());
 				usuarioLogin.get().setNome(usuario.get().getNome());
