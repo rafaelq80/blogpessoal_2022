@@ -39,21 +39,10 @@ public class Postagem {
 	@JsonIgnoreProperties("postagem")
 	private Tema tema;
 
-	/**
-	 * Relacionamento com a classe Usuario
-	 * Não esqueça de criar os métodos getters e setters para o atributo usuario.
-	 */
 	@ManyToOne
 	@JsonIgnoreProperties("postagem")
 	private Usuario usuario;
 
-	/**
-	 * 
-	 * Os Métodos Get e Set obrigatoriamente devem ser criados para todos os atributos
-     * da Classe, inclusive os novos atributos que forem adicionados no decorrer do
-     * processo de Desenvolvimento.
-	 * 
-	 */	
 	public Long getId() {
 		return id;
 	}
@@ -93,10 +82,6 @@ public class Postagem {
 	public void setTema(Tema tema) {
 		this.tema = tema;
 	}
-
-	/**
-	 * Métodos Get e Set para o atributo usuario
-	 */
 
 	public Usuario getUsuario() {
 		return this.usuario;

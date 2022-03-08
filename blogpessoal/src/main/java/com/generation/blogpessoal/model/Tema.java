@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 @Table(name = "tb_temas")
 public class Tema{
@@ -44,9 +43,6 @@ public class Tema{
 			this.descricao = descricao;
 		}
 
-		/**
-		 *  Métodos Get e Set para a Collection postagem
-		 */
 		public List<Postagem> getPostagem() {
 			return postagem;
 		}
