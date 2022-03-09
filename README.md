@@ -343,11 +343,6 @@ public class UsuarioRepositoryTest {
 		assertTrue(listaDeUsuarios.get(2).getNome().equals("Adriana da Silva"));
 		
 	}
-
-    @AfterAll
-	public void end() {
-		usuarioRepository.deleteAll();
-	}
     
 }
 ```
