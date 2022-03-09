@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 
 import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.UsuarioLogin;
 import com.generation.blogpessoal.repository.UsuarioRepository;
 import com.generation.blogpessoal.service.UsuarioService;
 
@@ -273,7 +274,7 @@ public class UsuarioControllerTest {
 				.withBasicAuth("root", "root")
 				.exchange("/usuarios/" + usuarioBusca.get().getId(), HttpMethod.GET, null, String.class);
 		
-				/**
+		/**
 		 *  Verifica se a requisição retornou o Status Code OK (200) 
 		 * Se for verdadeira, o teste passa, se não, o teste falha.
 		 */
@@ -281,4 +282,40 @@ public class UsuarioControllerTest {
 		
 	}
 
+	@Test
+	@Order(6)
+	@DisplayName("Login do Usuário")
+	public void deveAutenticarUsuario() {
+
+		/**
+		 * Persiste um objeto da Classe Usuario no Banco de dados através do Método cadastrarUsuario
+		 * da Classe UsuarioService
+		 */
+		usuarioService.cadastrarUsuario(new Usuario(0L, 
+			"Marisa Souza", "marisa_souza@email.com.br", "13465278", "https://i.imgur.com/T12NIp9.jpg"));
+
+		/**
+		 * Cria um Objeto da Classe UsuarioLogin dentro de um Objeto da Classe HttpEntity (Entidade HTTP).
+		 * O Objeto desta Classe será preenchido apenas como o usuário e senha do usuário criado acima.
+		 */
+		HttpEntity<UsuarioLogin> corpoRequisicao = new HttpEntity<UsuarioLogin>(new UsuarioLogin(0L, 
+			"", "marisa_souza@email.com.br", "13465278", "", ""));
+
+		/**
+		 * Cria um Objeto da Classe ResponseEntity (corpoResposta), que receberá a Resposta da Requisição que será 
+		 * enviada pelo Objeto da Classe TestRestTemplate.
+		 * 
+		 * Na requisição HTTP será enviada a URL do recurso (/usuarios/logar), o verbo (POST), a entidade
+		 * HTTP criada acima (corpoRequisicao) e a Classe de retornos da Resposta (UsuarioLogin).
+		 */
+		ResponseEntity<UsuarioLogin> corpoResposta = testRestTemplate
+			.exchange("/usuarios/logar", HttpMethod.POST, corpoRequisicao, UsuarioLogin.class);
+
+		/**
+		 *  Verifica se a requisição retornou o Status Code OK (200) 
+		 * Se for verdadeira, o teste passa, se não, o teste falha.
+		 */
+		assertEquals(HttpStatus.OK, corpoResposta.getStatusCode());
+
+	}
 }
