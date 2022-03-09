@@ -27,6 +27,11 @@ public class UsuarioRepositoryTest {
 	@BeforeAll
 	void start(){
 
+		/**
+		 * Apaga todos os registros do banco de dados antes de iniciar os testes
+		 */
+		usuarioRepository.deleteAll();
+		
 		/** 
 		 * Persiste (Grava) 4 Objetos Usuario no Banco de dados
 		 */ 
