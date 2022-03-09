@@ -32,9 +32,9 @@ public class Tema{
 		 *  mappedBy = "tema": Indica qual Objeto será utilizado como "chave estrangeira" no relacionamento,
 		 *  em nosso exemplo será o objeto tema inserido na Classe Postagem
 		 * 
-		 *  cascade = CascadeType.ALL: Indica que toda e qualquer mudança efetuada num objeto da Classe 
-		 *  Tema se propagará para todos os respectivos objetos associados.
-		 *  Exemplo: Se eu apagar um tema, todas as postagens associadas ao tema apagado também serão apagadas.
+		 *  cascade = CascadeType.REMOVE: Indica que apenas a ação apagar um Objeto da Classe Tema,
+		 *  se propagará para todos os respectivos objetos associados ao Objeto Tema apagado.
+		 *  Exemplo: Se eu apagar um tema (Java), todas as postagens associadas ao tema apagado também serão apagadas.
 		 * 
 		 *  A Anotação @JsonIgnoreProperties("postagem") desabilita a recursividade
 		 *  infinita durante a exibição dos dados no formato JSON
@@ -45,7 +45,7 @@ public class Tema{
 		 *  Não esqueça de criar os métodos getters e setters para a Collection postagem.
 		 * 
 		 */
-		@OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
+		@OneToMany(mappedBy = "tema", cascade = CascadeType.REMOVE)
 		@JsonIgnoreProperties("tema")
 		private List<Postagem> postagem;
 		
