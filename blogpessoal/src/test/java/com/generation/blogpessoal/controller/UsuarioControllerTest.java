@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 
+import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.repository.UsuarioRepository;
+import com.generation.blogpessoal.service.UsuarioService;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,9 +24,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.generation.blogpessoal.model.Usuario;
-import com.generation.blogpessoal.service.UsuarioService;
-
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,6 +37,20 @@ public class UsuarioControllerTest {
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@BeforeAll
+	void start(){
+
+		/**
+		 * Apaga todos os registros do banco de dados antes de iniciar os testes
+		 */
+
+		usuarioRepository.deleteAll();
+
+	}
 
 	@Test
 	@Order(1)

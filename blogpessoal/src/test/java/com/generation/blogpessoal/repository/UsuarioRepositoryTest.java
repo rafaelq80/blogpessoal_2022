@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
+import com.generation.blogpessoal.model.Usuario;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +16,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-
-import com.generation.blogpessoal.model.Usuario;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -27,6 +27,11 @@ public class UsuarioRepositoryTest {
 	@BeforeAll
 	void start(){
 
+		/**
+		 * Apaga todos os registros do banco de dados antes de iniciar os testes
+		 */
+
+		usuarioRepository.deleteAll();
 		/** 
 		 * Persiste (Grava) 4 Objetos Usuario no Banco de dados
 		 */ 
