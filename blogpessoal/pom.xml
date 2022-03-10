@@ -61,6 +61,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Dependência PostgreSQL -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency> 
+		
 		<!-- Dependência Springdocs -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
