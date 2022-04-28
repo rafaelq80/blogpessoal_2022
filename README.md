@@ -4,8 +4,6 @@
 
 <div align="center">
     <img src="https://i.imgur.com/w8tTOuT.png" title="source: imgur.com" /> 
-    <strong>trilha</strong>
-    <img src="https://i.imgur.com/zUC0bts.png" title="source: imgur.com" />
 </div>
 
 <br /><br />
