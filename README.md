@@ -7,7 +7,7 @@ Nesta atividade iremos implementar os testes nas Camadas Model, Repository e Con
 ## Boas Práticas
 
 1. <a href="#dep">Configure as Dependências no arquivo pom.xml</a>
-2. <a href="#dtb">Configure o Banco de Dados (db_blogpessoaltest)</a>
+2. <a href="#dtb">Configure o Banco de Dados (db_blogpessoaltest)</a>
 3. <a href="#pac">Prepare a estrutura de pacotes para os testes</a>
 4. <a href="#mcon">Crie os métodos construtores na Classe Usuario</a>
 5. <a href="#rep">Crie a Classe de testes na Camada Repository: UsuarioRepositoryTest</a>
@@ -112,16 +112,16 @@ Não esqueça de configurar a senha do usuário root.
 
 Na Source Folder de Testes (**src/test/java**) , observe que existe uma estrutura de pacotes semelhante a Source Folder Main (**src/main/java**). Crie na Source Folder de Testes as packages Repository e Controller como mostra a figura abaixo: 
 
-<div align="center"><img src="https://i.imgur.com/oExK6OD.png" title="source: imgur.com" /></div>
+<div align="center"><img src="https://i.imgur.com/WdKGgH6.png" title="source: imgur.com" /></div>
 
-***A Package Model não precisa ser criada**
+***As Packages Model, Service e Security não precisam ser criadas**
 
 O Processo de criação dos arquivos é o mesmo do código principal, exceto o nome dos arquivos que deverão ser iguais aos arquivos da Source Folder Main (**src/main/java**) acrescentando a palavra Test no final como mostra a figura abaixo. 
 
 <b>Exemplo: </b>
-<b>UsuarioRepository 🡪 UsuarioRepositoryTest</b>.
+<b>UsuarioRepository 🡪 UsuarioRepositoryTest</b>.
 
-<div align="center"><img src="https://i.imgur.com/jWOsW9c.png" title="source: imgur.com" /></div>
+<div align="center"><img src="https://i.imgur.com/MzJP9QG.png" title="source: imgur.com" /></div>
 
 ***A Classe UsuarioTest não precisa ser criada**
 
@@ -134,7 +134,7 @@ O Processo de criação dos arquivos é o mesmo do código principal, exceto o n
 Na Classe Usuario, na canada Model do pacote principal (main), vamos criar 2 métodos construtores: o primeiro com todos os atributos, exceto o postagens e um segundo método vazio, ou seja, sem atributos.
 
 ```java
-package br.org.generation.blogpessoal.model;
+package com.generation.blogpessoal.model;
 
 import java.util.List;
 
@@ -253,7 +253,7 @@ public class Usuario {
 A Classe UsuarioRepositoryTest será utilizada parta testar a Classe Repository do Usuario.  Antes de iniciar o teste, verifique se a sua Interface **UsuarioRepository**, localizada na Source Folder Principal, possui os métodos: **findByUsuario()** e **findAllByNomeContainingIgnoreCase()**, como mostra o código abaixo:
 
 ```java
-package br.org.generation.blogpessoal.repository;
+package com.generation.blogpessoal.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -261,7 +261,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.org.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
@@ -280,7 +280,7 @@ Crie a classe UsuarioRepositoryTest na package **repository**, na Source Folder 
 **Importante:** O Teste da Classe UsuarioRepository da camada Repository, utiliza o Banco de Dados, entretanto ele não criptografa a senha ao gravar um novo usuario no Banco de dados. O teste não utiliza a Classe de Serviço UsuarioService para gravar o usuário. O Teste utiliza o método save(), da Classe JpaRepository de forma direta. 
 
 ```java
-package br.org.generation.blogpessoal.repository;
+package com.generation.blogpessoal.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -296,7 +296,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import br.org.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.Usuario;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -307,6 +307,8 @@ public class UsuarioRepositoryTest {
 	
 	@BeforeAll
 	void start(){
+        
+        usuarioRepository.deleteAll();
 
 		usuarioRepository.save(new Usuario(0L, "João da Silva", "joao@email.com.br", "13465278",
                                            "https://i.imgur.com/FETvs2O.jpg"));
@@ -341,11 +343,6 @@ public class UsuarioRepositoryTest {
 		assertTrue(listaDeUsuarios.get(2).getNome().equals("Adriana da Silva"));
 		
 	}
-
-    @AfterAll
-	public void end() {
-		usuarioRepository.deleteAll();
-	}
     
 }
 ```
@@ -359,7 +356,7 @@ public class UsuarioRepositoryTest {
 A Classe UsuarioControllerTest será utilizada parta testar a Classe Controller do Usuario. Crie a classe UsuarioControllerTest na package **controller**, na Source Folder de Testes (**src/test/java**) 
 
 ```java
-package br.org.generation.blogpessoal.controller;
+package com.generation.blogpessoal.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -380,8 +377,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import br.org.generation.blogpessoal.model.Usuario;
-import br.org.generation.blogpessoal.service.UsuarioService;
+import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.repository.UsuarioRepository;
+import com.generation.blogpessoal.service.UsuarioService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -393,6 +391,15 @@ public class UsuarioControllerTest {
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+    @Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	@BeforeAll
+	void start(){
+
+		usuarioRepository.deleteAll();
+	}
 
 	@Test
 	@Order(1)
@@ -487,7 +494,7 @@ ResponseEntity<String> resposta = testRestTemplate
 Verifique na **Camada Security** se a Classe **BasicSecurityConfig** está igual ao código abaixo:
 
 ```java
-package br.org.generation.blogpessoal.security;
+package com.generation.blogpessoal.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -571,13 +578,13 @@ Ao escrever testes, sempre verifique se a importação dos pacotes do JUnit na C
 
 <h2 id="ref">Referências</h2>
 
-<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testing-introduction" target="_blank">Documentação Oficial do Spring Testing</a>
+<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testing-introduction" target="_blank">Documentação Oficial do Spring Testing</a>
 
-<a href="https://junit.org/junit5/" target="_blank">Página Oficial do JUnit5</a>
+<a href="https://junit.org/junit5/" target="_blank">Página Oficial do JUnit5</a>
 
-<a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank">Documentação Oficial do JUnit 5</a>
+<a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank">Documentação Oficial do JUnit 5</a>
 
-<a href="https://www.h2database.com/html/main.html" target="_blank">Documentação Oficial do Banco de dados  H2</a>
+<a href="https://www.h2database.com/html/main.html" target="_blank">Documentação Oficial do Banco de dados  H2</a>
 
 <a href="https://gasparbarancelli.com/post/banco-de-dados-h2-com-spring-boot" target="_blank">Banco de dados H2 com Spring Boot</a>
 
