@@ -63,7 +63,7 @@ public class TemaController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletePostagem(@PathVariable Long id) {
+	public ResponseEntity<?> deleteTema(@PathVariable Long id) {
 		
 		return temaRepository.findById(id)
 				.map(resposta -> {
