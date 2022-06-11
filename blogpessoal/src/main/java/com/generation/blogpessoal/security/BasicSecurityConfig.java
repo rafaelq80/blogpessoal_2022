@@ -34,6 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *  A annotation @EnableWebSecurity: habilita a configuração de segurança padrão 
  *  do Spring Security na nossa api.
  */
+@SuppressWarnings("deprecation")
 @EnableWebSecurity
 public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
 
