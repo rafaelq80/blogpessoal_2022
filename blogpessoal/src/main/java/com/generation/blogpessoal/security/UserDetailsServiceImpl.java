@@ -2,14 +2,16 @@ package com.generation.blogpessoal.security;
 
 import java.util.Optional;
 
-import com.generation.blogpessoal.model.Usuario;
-import com.generation.blogpessoal.repository.UsuarioRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.repository.UsuarioRepository;
 
 /**
  *  Classe UserDetailsServiceImpl 
@@ -55,20 +57,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		Optional<Usuario> usuario = userRepository.findByUsuario(userName);
 		
 		/**
-		 * Se o usuário não existir, o método lança uma Exception do tipo UsernameNotFoundException.
+		 * Se o usuário existir, retorna um objeto do tipo UserDetailsImpl criado com 
+		 * os dados recuperados do Banco de dados.
+		 * 
+		 * Senão, o método lança uma Exception do tipo HttpStatus.FORBIDDEN.
 		 */ 
 	  
-		usuario.orElseThrow(() -> new UsernameNotFoundException(userName + " not found."));
-
-		/**
-		 * Retorna um objeto do tipo UserDetailsImpl criado com os dados recuperados do
-		 * Banco de dados.
-		 * 
-		 * O operador :: faz parte de uma expressão que referencia um método, complementando
-		 * uma função lambda. Neste exemplo, o operador faz referência ao construtor da 
-		 * Classe UserDetailsImpl. 
-		 */
-
-		return usuario.map(UserDetailsImpl::new).get();
+		if (usuario.isPresent())
+			return new UserDetailsImpl(usuario.get());
+		else
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+			
 	}
 }
