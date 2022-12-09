@@ -4,11 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 
-import com.generation.blogpessoal.model.Usuario;
-import com.generation.blogpessoal.model.UsuarioLogin;
-import com.generation.blogpessoal.repository.UsuarioRepository;
-import com.generation.blogpessoal.service.UsuarioService;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -24,6 +19,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import com.generation.blogpessoal.model.Usuario;
+import com.generation.blogpessoal.model.UsuarioLogin;
+import com.generation.blogpessoal.repository.UsuarioRepository;
+import com.generation.blogpessoal.service.UsuarioService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,16 +41,20 @@ public class UsuarioControllerTest {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-
+	
 	@BeforeAll
 	void start(){
 
 		/**
 		 * Apaga todos os registros do banco de dados antes de iniciar os testes
 		 */
-
 		usuarioRepository.deleteAll();
-
+		
+		/**
+		 * Criar o usuário root para autenticar nos endpoints protegidos
+		 */
+		usuarioService.cadastrarUsuario(new Usuario(0L, 
+			"Root", "root@root.com", "rootroot", " "));
 	}
 
 	@Test
@@ -173,7 +177,7 @@ public class UsuarioControllerTest {
 		 * Senha: root
 		 */
 		ResponseEntity<Usuario> corpoResposta = testRestTemplate
-			.withBasicAuth("root", "root")
+			.withBasicAuth("root@root.com", "rootroot")
 			.exchange("/usuarios/atualizar", HttpMethod.PUT, corpoRequisicao, Usuario.class);
 
 		/**
@@ -226,7 +230,7 @@ public class UsuarioControllerTest {
 		 * Senha: root
 		 */
 		ResponseEntity<String> resposta = testRestTemplate
-			.withBasicAuth("root", "root")
+			.withBasicAuth("root@root.com", "rootroot")
 			.exchange("/usuarios/all", HttpMethod.GET, null, String.class);
 
 		/**
@@ -271,7 +275,7 @@ public class UsuarioControllerTest {
 		 * Senha: root
 		 */
 		ResponseEntity<String> resposta = testRestTemplate
-				.withBasicAuth("root", "root")
+				.withBasicAuth("root@root.com", "rootroot")
 				.exchange("/usuarios/" + usuarioBusca.get().getId(), HttpMethod.GET, null, String.class);
 		
 		/**
