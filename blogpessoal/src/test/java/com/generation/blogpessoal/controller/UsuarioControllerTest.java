@@ -49,6 +49,11 @@ public class UsuarioControllerTest {
 		 */
 		usuarioRepository.deleteAll();
 		
+		/**
+		 * Criar o usuário root para autenticar nos endpoints protegidos
+		 */
+		usuarioService.cadastrarUsuario(new Usuario(0L, 
+			"Root", "root@root.com", "rootroot", " "));
 	}
 
 	@Test
@@ -171,7 +176,7 @@ public class UsuarioControllerTest {
 		 * Senha: root
 		 */
 		ResponseEntity<Usuario> corpoResposta = testRestTemplate
-			.withBasicAuth("root", "root")
+			.withBasicAuth("root@root.com", "rootroot")
 			.exchange("/usuarios/atualizar", HttpMethod.PUT, corpoRequisicao, Usuario.class);
 
 		/**
@@ -224,7 +229,7 @@ public class UsuarioControllerTest {
 		 * Senha: root
 		 */
 		ResponseEntity<String> resposta = testRestTemplate
-			.withBasicAuth("root", "root")
+			.withBasicAuth("root@root.com", "rootroot")
 			.exchange("/usuarios/all", HttpMethod.GET, null, String.class);
 
 		/**
